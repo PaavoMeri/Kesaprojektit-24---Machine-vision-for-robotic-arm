@@ -126,7 +126,7 @@ def process_image():
     pil_image = Image.fromarray(image_rgb)
 
     # Resize the image to fit within the window
-    pil_image = pil_image.resize((int(app.winfo_width() * 0.6), app.winfo_height()), Image.ANTIALIAS)
+    pil_image = pil_image.resize((int(app.winfo_width() * 0.6), app.winfo_height()), Image.LANCZOS)
     
     # Convert to ImageTk format
     tk_image = ImageTk.PhotoImage(pil_image)
