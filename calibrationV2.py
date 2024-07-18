@@ -358,11 +358,17 @@ if __name__ == '__main__':
     intermediate_point[2] = -100
     safe_position = start_point
 
+    x_offset = 0.1
+    y_offset = -0.1
+
     pixel_points = []
     
     for i, robot_point in enumerate(robot_points):
         if i == 0:
-            current_pickup_point = pickup_point
+            current_pickup_point = pickup_point.copy()
+            # Apply offsets for initial pickup
+            current_pickup_point[0] += x_offset
+            current_pickup_point[1] += y_offset
             # Move to 5mm above the pickup location
             above_pickup_point = current_pickup_point.copy()
             above_pickup_point[2] += 5
@@ -372,7 +378,10 @@ if __name__ == '__main__':
             # Show confirmation popup
             show_confirmation_popup()
         else:
-            current_pickup_point = robot_points[i - 1]
+            current_pickup_point = robot_points[i - 1].copy()
+            # Apply offsets for subsequent pickups
+            current_pickup_point[0] += x_offset
+            current_pickup_point[1] += y_offset
 
         RunPoint(move, start_point)
         WaitArrive(start_point)
@@ -382,6 +391,7 @@ if __name__ == '__main__':
         RunPoint(move, intermediate_pickup_point)
         WaitArrive(intermediate_pickup_point)
 
+        # Move to the adjusted pickup location
         RunPoint(move, current_pickup_point)
         WaitArrive(current_pickup_point)
 
