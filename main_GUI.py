@@ -121,19 +121,19 @@ def process_image():
                     # Put the color label next to the bounding box
                     cv2.putText(cropped_frame, color, (center_x + 10, center_y), cv2.FONT_HERSHEY_SIMPLEX, 2.0, (255, 255, 255), 3)
 
-        # Resize the image to fit your screen dimensions or a fixed size
-        screen_res = 640, 360  # You can adjust this to your screen resolution
-        scale_width = screen_res[0] / cropped_frame.shape[1]
-        scale_height = screen_res[1] / cropped_frame.shape[0]
-        scale = min(scale_width, scale_height)
-        window_width = int(cropped_frame.shape[1] * scale)
-        window_height = int(cropped_frame.shape[0] * scale)
-        resized_frame = cv2.resize(cropped_frame, (window_width, window_height))
+    # Convert the image to PIL format
+    image_rgb = cv2.cvtColor(cropped_frame, cv2.COLOR_BGR2RGB)
+    pil_image = Image.fromarray(image_rgb)
 
-    # Display the image with contours
-    cv2.imshow('Detected Contours', resized_frame)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # Resize the image to fit within the window
+    pil_image = pil_image.resize((int(app.winfo_width() * 0.6), app.winfo_height()), Image.ANTIALIAS)
+    
+    # Convert to ImageTk format
+    tk_image = ImageTk.PhotoImage(pil_image)
+    
+    # Update the image_label
+    image_label.config(image=tk_image)
+    image_label.image = tk_image  # Keep a reference to avoid garbage collection
 
 # Same as the process_image function but for pink
 def process_pink_color(hsv, cropped_frame):
@@ -250,47 +250,49 @@ app = tk.Tk()
 app.title("Pick and Place Robot Controller")
 app.geometry("1280x720")
 
-frame = tk.Frame(app)
-frame.pack(pady=20)
+# Controls on the left side
+control_frame = tk.Frame(app)
+control_frame.pack(side="left", fill="y", padx=10, pady=10)
 
-calibration_button = tk.Button(frame, text="Run Calibration Script", command=run_calibration_script)
+calibration_button = tk.Button(control_frame, text="Run Calibration Script", command=run_calibration_script)
 calibration_button.pack(pady=10)
 
-get_image_button = tk.Button(frame, text="Get Image", command=process_image)
+get_image_button = tk.Button(control_frame, text="Get Image", command=process_image)
 get_image_button.pack(pady=10)
 
-tk.Label(frame, text="Enter count for each color:").pack(pady=5)
+tk.Label(control_frame, text="Enter count for each color:").pack(pady=5)
 
 vcmd = (app.register(validate_input), '%P', '%S')
 
-tk.Label(frame, text="Blue:").pack()
-blue_spinbox = tk.Spinbox(frame, from_=0, to=100, increment=1, validate='key', validatecommand=vcmd)
+tk.Label(control_frame, text="Blue:").pack()
+blue_spinbox = tk.Spinbox(control_frame, from_=0, to=100, increment=1, validate='key', validatecommand=vcmd)
 blue_spinbox.pack()
 
-tk.Label(frame, text="Green:").pack()
-green_spinbox = tk.Spinbox(frame, from_=0, to=100, increment=1, validate='key', validatecommand=vcmd)
+tk.Label(control_frame, text="Green:").pack()
+green_spinbox = tk.Spinbox(control_frame, from_=0, to=100, increment=1, validate='key', validatecommand=vcmd)
 green_spinbox.pack()
 
-tk.Label(frame, text="Yellow:").pack()
-yellow_spinbox = tk.Spinbox(frame, from_=0, to=100, increment=1, validate='key', validatecommand=vcmd)
+tk.Label(control_frame, text="Yellow:").pack()
+yellow_spinbox = tk.Spinbox(control_frame, from_=0, to=100, increment=1, validate='key', validatecommand=vcmd)
 yellow_spinbox.pack()
 
-tk.Label(frame, text="Pink:").pack()
-pink_spinbox = tk.Spinbox(frame, from_=0, to=100, increment=1, validate='key', validatecommand=vcmd)
+tk.Label(control_frame, text="Pink:").pack()
+pink_spinbox = tk.Spinbox(control_frame, from_=0, to=100, increment=1, validate='key', validatecommand=vcmd)
 pink_spinbox.pack()
 
-tk.Label(frame, text="Orange:").pack()
-orange_spinbox = tk.Spinbox(frame, from_=0, to=100, increment=1, validate='key', validatecommand=vcmd)
+tk.Label(control_frame, text="Orange:").pack()
+orange_spinbox = tk.Spinbox(control_frame, from_=0, to=100, increment=1, validate='key', validatecommand=vcmd)
 orange_spinbox.pack()
 
-tk.Label(frame, text="Purple:").pack()
-purple_spinbox = tk.Spinbox(frame, from_=0, to=100, increment=1, validate='key', validatecommand=vcmd)
+tk.Label(control_frame, text="Purple:").pack()
+purple_spinbox = tk.Spinbox(control_frame, from_=0, to=100, increment=1, validate='key', validatecommand=vcmd)
 purple_spinbox.pack()
 
-main_button = tk.Button(frame, text="Run Main Script", command=run_main_script)
+main_button = tk.Button(control_frame, text="Run Main Script", command=run_main_script)
 main_button.pack(pady=10)
 
-image_label = tk.Label(frame)
-image_label.pack(pady=10)
+# Image on the right side
+image_label = tk.Label(app)
+image_label.pack(side="right", fill=tk.BOTH, expand=True, padx=10, pady=10)
 
 app.mainloop()
