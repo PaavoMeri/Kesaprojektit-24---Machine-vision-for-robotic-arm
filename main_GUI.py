@@ -7,9 +7,8 @@ import numpy as np
 from time import sleep
 import threading
 
-# Aseta kalibrointi- ja pääskriptien polut
-CALIBRATION_SCRIPT_PATH = r"C:\Users\Paavo Meri\Desktop\Projekti\Projekti\calibrationV2.py"
-MAIN_SCRIPT_PATH = r"C:\Users\Paavo Meri\Desktop\Projekti\Projekti\mainV2.py"
+CALIBRATION_SCRIPT_PATH = r"C:\Users\paavo\OneDrive\Tiedostot\GitHub\Kesaprojektit-24---Machine-vision-for-robotic-arm\calibrationV2.py"
+MAIN_SCRIPT_PATH = r"C:\Users\paavo\OneDrive\Tiedostot\GitHub\Kesaprojektit-24---Machine-vision-for-robotic-arm\mainV2.py"
 
 # Define color ranges in HSV
 color_ranges_hsv = {

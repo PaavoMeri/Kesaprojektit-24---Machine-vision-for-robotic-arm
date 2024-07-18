@@ -46,7 +46,7 @@ Z_PLACE = 20
 kernel = np.ones((3, 3), np.uint8)
 
 # Load the transformation matrix from the file
-transformation_matrix = np.loadtxt(r"C:\Users\Paavo Meri\Desktop\Projekti\Projekti\transformation_matrix.txt")
+transformation_matrix = np.loadtxt(r"C:\Users\paavo\OneDrive\Tiedostot\GitHub\Kesaprojektit-24---Machine-vision-for-robotic-arm\transformation_matrix.txt")
 
 
 def ConnectRobot(): 
@@ -69,7 +69,7 @@ def RunPoint(move: DobotApiMove, point_list: list):
     move.MovL(point_list[0], point_list[1], point_list[2], point_list[3])
 
 def SuctionCup(dashboard: DobotApiDashboard, PORT, STATUS):
-    dashboard.DO(PORT, STATUS) # PORT 1 is suction PORT 2 is air pressure STATUS is 1 = on 0 = off
+    dashboard.DO(PORT, STATUS) # PORT 1 = suction PORT 2 = air pressure     STATUS: 1 = on 0 = off
 
 def GetFeed(feed: DobotApi):
     global current_actual
@@ -267,9 +267,9 @@ def process_pink_color(hsv, cropped_frame, color_coordinates):
 
 def main(user_inputs):
     dashboard, move, feed = ConnectRobot()
-    print("Starting to enable...")
+    print("Enabling")
     dashboard.EnableRobot()
-    print("Enablement complete :)")
+    print("Enabled)")
     feed_thread = threading.Thread(target=GetFeed, args=(feed,))
     feed_thread.setDaemon(True)
     feed_thread.start()
@@ -321,7 +321,6 @@ def main(user_inputs):
                 WaitArrive(above_place_location)
 
             else:
-                print(f"Not enough {color} tiles detected to pick {count} tiles.")
                 break
 
 if __name__ == "__main__":
