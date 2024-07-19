@@ -350,8 +350,8 @@ if __name__ == '__main__':
     intermediate_point[2] = -100
     safe_position = start_point
 
-    x_offset = 0.1
-    y_offset = 0.1
+    x_offset = -0.1
+    y_offset = -0.1
 
     pixel_points = []
 
@@ -368,7 +368,7 @@ if __name__ == '__main__':
             current_pickup_point[1] += y_offset
             # Move to 5mm above the pickup location
             above_pickup_point = current_pickup_point.copy()
-            above_pickup_point[2] += 5
+            above_pickup_point[2] += 3
             RunPoint(move, above_pickup_point)
             WaitArrive(above_pickup_point)
 
