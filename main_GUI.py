@@ -13,7 +13,7 @@ MAIN_SCRIPT_PATH = r"C:\Users\Paavo Meri\Documents\GitHub\Kesaprojektit-24---Mac
 class LiveFeed:
     def __init__(self, label):
         self.label = label
-        self.cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        self.cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)  # Reduced resolution
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)  # Reduced resolution
         self.cap.set(cv2.CAP_PROP_FPS, 15)  # Adjusted FPS for better performance
