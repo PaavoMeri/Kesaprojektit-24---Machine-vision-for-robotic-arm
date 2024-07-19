@@ -22,24 +22,24 @@ color_ranges_hsv = {
     "purple": (np.array([145, 35, 35]), np.array([165, 140, 75])),
     "green": (np.array([50, 40, 40]), np.array([90, 255, 255])),
     "blue": (np.array([100, 100, 100]), np.array([130, 255, 255])),
-    "yellow": (np.array([27, 135, 130]), np.array([35, 200, 180])),
+    "yellow": (np.array([27, 135, 130]), np.array([36, 200, 200])),
 }
 
 # CHANGE PLACE LOCATIONS
 PLACE_LOCATIONS = {
-    'blue': [-335, -190, -20],
-    'green': [-328, -270, -20],
+    'blue': [-345, -190, -20],
+    'green': [-338, -270, -20],
     
-    'yellow': [-256, -316, -20],
-    'pink': [-261, -235, -20],
+    'yellow': [-266, -316, -20],
+    'pink': [-271, -235, -20],
 
-    'orange': [-270, -152, -20],
-    'purple': [-261, -235, -20]
+    'orange': [-280, -152, -20],
+    'purple': [-271, -235, -20]
 }
 
 # Define Z coordinates
 Z_ABOVE = -20
-Z_GROUND = -166
+Z_GROUND = -169
 Z_PLACE = 20
 
 # Kernel for morphological operations
@@ -66,7 +66,7 @@ def ConnectRobot():
         raise e
 
 def RunPoint(move: DobotApiMove, point_list: list):
-    move.MovL(point_list[0], point_list[1], point_list[2], point_list[3])
+    move.MovJ(point_list[0], point_list[1], point_list[2], point_list[3])
 
 def SuctionCup(dashboard: DobotApiDashboard, PORT, STATUS):
     dashboard.DO(PORT, STATUS) # PORT 1 = suction PORT 2 = air pressure     STATUS: 1 = on 0 = off
