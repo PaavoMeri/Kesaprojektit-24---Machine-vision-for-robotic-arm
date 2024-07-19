@@ -4,34 +4,51 @@ from PIL import Image, ImageTk
 import subprocess
 import cv2
 import numpy as np
-from time import sleep
 import threading
+from time import sleep
 
-CALIBRATION_SCRIPT_PATH = r"C:\Users\paavo\OneDrive\Tiedostot\GitHub\Kesaprojektit-24---Machine-vision-for-robotic-arm\calibrationV2.py"
-MAIN_SCRIPT_PATH = r"C:\Users\paavo\OneDrive\Tiedostot\GitHub\Kesaprojektit-24---Machine-vision-for-robotic-arm\mainV2.py"
+CALIBRATION_SCRIPT_PATH = r"C:\Users\Paavo Meri\Documents\GitHub\Kesaprojektit-24---Machine-vision-for-robotic-arm\calibrationV2.py"
+MAIN_SCRIPT_PATH = r"C:\Users\Paavo Meri\Documents\GitHub\Kesaprojektit-24---Machine-vision-for-robotic-arm\mainV2.py"
 
 class LiveFeed:
     def __init__(self, label):
         self.label = label
-        self.cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
-        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 3840)
-        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 2160)
+        self.cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)  # Reduced resolution
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)  # Reduced resolution
+        self.cap.set(cv2.CAP_PROP_FPS, 15)  # Adjusted FPS for better performance
         self.running = True
-
-    def start(self):
-        self.update_frame()
+        self.aspect_ratio = self.cap.get(cv2.CAP_PROP_FRAME_WIDTH) / self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        self.thread = threading.Thread(target=self.update_frame)
+        self.thread.daemon = True
+        self.thread.start()
 
     def update_frame(self):
-        if self.running:
+        while self.running:
             ret, frame = self.cap.read()
             if ret:
                 image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 pil_image = Image.fromarray(image_rgb)
-                pil_image = pil_image.resize((int(app.winfo_width() * 0.6), app.winfo_height()), Image.LANCZOS)
+
+                # Maintain aspect ratio
+                window_width = app.winfo_width()
+                window_height = int(window_width / self.aspect_ratio)
+                
+                if window_height > app.winfo_height():
+                    window_height = app.winfo_height()
+                    window_width = int(window_height * self.aspect_ratio)
+
+                pil_image = pil_image.resize((window_width, window_height), Image.LANCZOS)
                 tk_image = ImageTk.PhotoImage(pil_image)
-                self.label.config(image=tk_image)
-                self.label.image = tk_image
-            self.label.after(10, self.update_frame)
+
+                # Update the GUI on the main thread
+                self.label.after(0, self.update_gui, tk_image)
+            else:
+                sleep(0.03)
+
+    def update_gui(self, tk_image):
+        self.label.config(image=tk_image)
+        self.label.image = tk_image
 
     def stop(self):
         self.running = False
@@ -105,7 +122,8 @@ def validate_input(value_if_allowed, text):
 
 app = tk.Tk()
 app.title("Pick and Place Robot Controller")
-app.geometry("1280x720")
+app.geometry("1280x720")  # Ensure the app has an initial size
+app.update()  # Force the geometry manager to calculate the window size
 
 # Controls on the left side
 control_frame = tk.Frame(app)
@@ -150,6 +168,5 @@ image_label = tk.Label(app)
 image_label.pack(side="right", fill=tk.BOTH, expand=True, padx=10, pady=10)
 
 live_feed = LiveFeed(image_label)
-live_feed.start()
 
 app.mainloop()
