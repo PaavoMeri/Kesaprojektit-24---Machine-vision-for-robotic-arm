@@ -46,7 +46,7 @@ Z_PLACE = 20
 kernel = np.ones((3, 3), np.uint8)
 
 # Load the transformation matrix from the file
-transformation_matrix = np.loadtxt(r"C:\Users\paavo\OneDrive\Tiedostot\GitHub\Kesaprojektit-24---Machine-vision-for-robotic-arm\transformation_matrix.txt")
+transformation_matrix = np.loadtxt(r"C:\Users\Paavo Meri\Documents\GitHub\Kesaprojektit-24---Machine-vision-for-robotic-arm\transformation_matrix.txt")
 
 
 def ConnectRobot(): 
@@ -162,70 +162,72 @@ def process_image(color_coordinates):
         print("Error: Could not open video device.")
         return None
 
-    ret, frame = cap.read()
-    cap.release()
-    if not ret:
-        print("Error: Could not read frame.")
-        return None
+    try:  # Added try block
+        ret, frame = cap.read()
+        if not ret:
+            print("Error: Could not read frame.")
+            return None
 
-    height, width, _ = frame.shape
-    crop_top = 0 
-    crop_bottom = height
-    crop_left = 1250
-    crop_right = width
-    cropped_frame = frame[crop_top:crop_bottom, crop_left:crop_right]
-    hsv = cv2.cvtColor(cropped_frame, cv2.COLOR_BGR2HSV)
-    process_pink_color(hsv, cropped_frame, color_coordinates)
+        height, width, _ = frame.shape
+        crop_top = 0 
+        crop_bottom = height
+        crop_left = 1250
+        crop_right = width
+        cropped_frame = frame[crop_top:crop_bottom, crop_left:crop_right]
+        hsv = cv2.cvtColor(cropped_frame, cv2.COLOR_BGR2HSV)
+        process_pink_color(hsv, cropped_frame, color_coordinates)
 
-    for color, (lower, upper) in color_ranges_hsv.items():
-        if "pink" in color:
-            continue
-        
-        mask = cv2.inRange(hsv, lower, upper)
-        mask = cv2.GaussianBlur(mask, (15, 15), 0)
-        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=2)
-        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=2)
-        
-        contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        
-        for contour in contours:
-            area = cv2.contourArea(contour)
-            if area > 500:
-                rect = cv2.minAreaRect(contour)
-                box = cv2.boxPoints(rect)
-                box = np.intp(box)
-                
-                width = rect[1][0]
-                height = rect[1][1]
-                
-                aspect_ratio = float(width) / height if width > height else float(height) / width
-                
-                min_size = 100
-                max_size = 999
-                
-                if 0.8 < aspect_ratio < 1.2 and min_size < width < max_size and min_size < height < max_size:
-                    center_x = int(rect[0][0])
-                    center_y = int(rect[0][1])
+        for color, (lower, upper) in color_ranges_hsv.items():
+            if "pink" in color:
+                continue
+            
+            mask = cv2.inRange(hsv, lower, upper)
+            mask = cv2.GaussianBlur(mask, (15, 15), 0)
+            mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=2)
+            mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=2)
+            
+            contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            
+            for contour in contours:
+                area = cv2.contourArea(contour)
+                if area > 500:
+                    rect = cv2.minAreaRect(contour)
+                    box = cv2.boxPoints(rect)
+                    box = np.intp(box)
                     
-                    transformed_x, transformed_y = transform_coordinates(transformation_matrix, np.array([center_x, center_y]))
+                    width = rect[1][0]
+                    height = rect[1][1]
                     
-                    if color not in color_coordinates:
-                        color_coordinates[color] = []
-                    color_coordinates[color].append((transformed_x, transformed_y))
+                    aspect_ratio = float(width) / height if width > height else float(height) / width
                     
-                    cv2.drawContours(cropped_frame, [box], 0, (0, 255, 0), 5)
-                    cv2.circle(cropped_frame, (center_x, center_y), 3, (0, 0, 255), -1)
-                    cv2.putText(cropped_frame, color, (center_x + 10, center_y), cv2.FONT_HERSHEY_SIMPLEX, 2.0, (255, 255, 255), 3)
+                    min_size = 100
+                    max_size = 999
+                    
+                    if 0.8 < aspect_ratio < 1.2 and min_size < width < max_size and min_size < height < max_size:
+                        center_x = int(rect[0][0])
+                        center_y = int(rect[0][1])
+                        
+                        transformed_x, transformed_y = transform_coordinates(transformation_matrix, np.array([center_x, center_y]))
+                        
+                        if color not in color_coordinates:
+                            color_coordinates[color] = []
+                        color_coordinates[color].append((transformed_x, transformed_y))
+                        
+                        cv2.drawContours(cropped_frame, [box], 0, (0, 255, 0), 5)
+                        cv2.circle(cropped_frame, (center_x, center_y), 3, (0, 0, 255), -1)
+                        cv2.putText(cropped_frame, color, (center_x + 10, center_y), cv2.FONT_HERSHEY_SIMPLEX, 2.0, (255, 255, 255), 3)
 
-    screen_res = 1280, 720
-    scale_width = screen_res[0] / cropped_frame.shape[1]
-    scale_height = screen_res[1] / cropped_frame.shape[0]
-    scale = min(scale_width, scale_height)
-    window_width = int(cropped_frame.shape[1] * scale)
-    window_height = int(cropped_frame.shape[0] * scale)
-    resized_frame = cv2.resize(cropped_frame, (window_width, window_height))
-    
-    return resized_frame             
+        screen_res = 1280, 720
+        scale_width = screen_res[0] / cropped_frame.shape[1]
+        scale_height = screen_res[1] / cropped_frame.shape[0]
+        scale = min(scale_width, scale_height)
+        window_width = int(cropped_frame.shape[1] * scale)
+        window_height = int(cropped_frame.shape[0] * scale)
+        resized_frame = cv2.resize(cropped_frame, (window_width, window_height))
+        
+        return resized_frame
+    finally:  # Added finally block
+        cap.release()
 
 def process_pink_color(hsv, cropped_frame, color_coordinates):
     pink_mask = cv2.inRange(hsv, color_ranges_hsv["pink1"][0], color_ranges_hsv["pink1"][1]) | \

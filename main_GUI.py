@@ -18,10 +18,28 @@ class LiveFeed:
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)  # Reduced resolution
         self.cap.set(cv2.CAP_PROP_FPS, 15)  # Adjusted FPS for better performance
         self.running = True
-        self.aspect_ratio = self.cap.get(cv2.CAP_PROP_FRAME_WIDTH) / self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        if self.cap.isOpened():
+            self.aspect_ratio = self.cap.get(cv2.CAP_PROP_FRAME_WIDTH) / self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        else:
+            self.aspect_ratio = 16 / 9  # Default aspect ratio if camera fails to open
         self.thread = threading.Thread(target=self.update_frame)
         self.thread.daemon = True
         self.thread.start()
+
+    def start(self):
+        if not self.running:
+            self.running = True
+            self.cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+            self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)  # Reduced resolution
+            self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)  # Reduced resolution
+            self.cap.set(cv2.CAP_PROP_FPS, 15)  # Adjusted FPS for better performance
+            if self.cap.isOpened():
+                self.aspect_ratio = self.cap.get(cv2.CAP_PROP_FRAME_WIDTH) / self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+            else:
+                self.aspect_ratio = 16 / 9  # Default aspect ratio if camera fails to open
+            self.thread = threading.Thread(target=self.update_frame)
+            self.thread.daemon = True
+            self.thread.start()
 
     def update_frame(self):
         while self.running:
