@@ -17,26 +17,26 @@ kernel = np.ones((3, 3), np.uint8)
 
 # Predefined points
 robot_points = [
-    [32.48, -237.79, -166, 0], 
-    [111.85, -212.34, -166, 0], 
-    [177.73, -161.28, -166, 0], 
-    [58.61, -258.44, -166, 0], 
-    [143.47, -222.80, -166, 0], 
-    [211.02, -160.30, -166, 0], 
-    [88.55, -276.15, -166, 0], 
-    [177.66, -229.21, -166, 0], 
-    [245.34, -154.63, -166, 0], 
-    [121.96, -290.43, -166, 0], 
-    [213.94, -231.21, -166, 0], 
-    [46.02, -336.87, -166, 0], 
-    [158.46, -300.82, -166, 0], 
-    [251.79, -228.48, -166, 0], 
-    [80.73, -355.96, -166, 0], 
-    [197.61, -306.88, -166, 0], 
-    [290.65, -220.79, -166, 0], 
-    [119.08, -371.38, -166, 0], 
-    [238.92, -308.25, -166, 0], 
-    [346.80, -178.40, -166, 0]
+    [32.48, -237.79, -169, 0], 
+    [111.85, -212.34, -169, 0], 
+    [177.73, -161.28, -169, 0], 
+    [58.61, -258.44, -169, 0], 
+    [143.47, -222.80, -169, 0], 
+    [211.02, -160.30, -169, 0], 
+    [88.55, -276.15, -169, 0], 
+    [177.66, -229.21, -169, 0], 
+    [245.34, -154.63, -169, 0], 
+    [121.96, -290.43, -169, 0], 
+    [213.94, -231.21, -169, 0], 
+    [46.02, -336.87, -169, 0], 
+    [158.46, -300.82, -169, 0], 
+    [251.79, -228.48, -169, 0], 
+    [80.73, -355.96, -169, 0], 
+    [197.61, -306.88, -169, 0], 
+    [290.65, -220.79, -169, 0], 
+    [119.08, -371.38, -169, 0], 
+    [238.92, -308.25, -169, 0], 
+    [346.80, -178.40, -169, 0]
 ]
 
 # Define color ranges in HSV
@@ -49,7 +49,7 @@ color_ranges_hsv = {
     "purple": (np.array([145, 35, 35]), np.array([165, 140, 75])),
     "green": (np.array([50, 40, 40]), np.array([90, 255, 255])),
     "blue": (np.array([100, 100, 100]), np.array([130, 255, 255])),
-    "yellow": (np.array([27, 135, 130]), np.array([35, 200, 180])),
+    "yellow": (np.array([27, 135, 130]), np.array([36, 200, 200])),
 }
 
 def show_confirmation_popup():
@@ -75,7 +75,7 @@ def ConnectRobot():
         raise e
 
 def RunPoint(move: DobotApiMove, point_list: list):
-    move.MovL(point_list[0], point_list[1], point_list[2], point_list[3])
+    move.MovJ(point_list[0], point_list[1], point_list[2], point_list[3])
 
 def SuctionCup(dashboard: DobotApiDashboard, PORT, STATUS):
     dashboard.DO(PORT, STATUS)
@@ -271,7 +271,7 @@ def process_image():
     
     # Display the image with contours
     cv2.imshow(window_name, resized_frame)
-    cv2.waitKey(500)
+    cv2.waitKey(1500)
     cv2.destroyAllWindows()
 
     print(f"Number of detected points: {len(detected_points)}")
@@ -352,8 +352,8 @@ if __name__ == '__main__':
     feed_thread1.start()
     print("Loop")
 
-    start_point = [300, 0, -100, 0]
-    pickup_point = [300, 0, -165, 0]
+    start_point = [300, -150, -100, 0]
+    pickup_point = [300, -150, -169, 0]
     intermediate_point = pickup_point.copy()
     intermediate_point[2] = -100
     safe_position = start_point
@@ -371,7 +371,7 @@ if __name__ == '__main__':
             current_pickup_point[1] += y_offset
             # Move to 5mm above the pickup location
             above_pickup_point = current_pickup_point.copy()
-            above_pickup_point[2] += 5
+            above_pickup_point[2] += 3
             RunPoint(move, above_pickup_point)
             WaitArrive(above_pickup_point)
 
@@ -441,7 +441,7 @@ if __name__ == '__main__':
         transformation_matrix = transformation_matrix.T
 
         # Save the transposed transformation matrix to a file
-        np.savetxt('transformation_matrix.txt', transformation_matrix)
+        np.savetxt(r"C:\Users\Paavo Meri\Documents\GitHub\Kesaprojektit-24---Machine-vision-for-robotic-arm\transformation_matrix.txt", transformation_matrix)
 
         print("Transposed Transformation Matrix:")
         print(transformation_matrix)
