@@ -351,7 +351,7 @@ if __name__ == '__main__':
     safe_position = start_point
 
     x_offset = 0.1
-    y_offset = -0.1
+    y_offset = 0.1
 
     pixel_points = []
 

@@ -14,9 +14,9 @@ class LiveFeed:
     def __init__(self, label):
         self.label = label
         self.cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
-        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)  # Reduced resolution
-        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)  # Reduced resolution
-        self.cap.set(cv2.CAP_PROP_FPS, 15)  # Adjusted FPS for better performance
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+        self.cap.set(cv2.CAP_PROP_FPS, 15)
         self.running = True
         if self.cap.isOpened():
             self.aspect_ratio = self.cap.get(cv2.CAP_PROP_FRAME_WIDTH) / self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
@@ -30,9 +30,9 @@ class LiveFeed:
         if not self.running:
             self.running = True
             self.cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-            self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)  # Reduced resolution
-            self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)  # Reduced resolution
-            self.cap.set(cv2.CAP_PROP_FPS, 15)  # Adjusted FPS for better performance
+            self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+            self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+            self.cap.set(cv2.CAP_PROP_FPS, 15)
             if self.cap.isOpened():
                 self.aspect_ratio = self.cap.get(cv2.CAP_PROP_FRAME_WIDTH) / self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
             else:
@@ -127,7 +127,6 @@ def run_main_script():
             purple_spinbox.insert(0, '0')
             live_feed.start()
 
-    # Run the script in a separate thread to avoid blocking the GUI
     threading.Thread(target=process_and_run_script).start()
 
 def validate_input(value_if_allowed, text):
@@ -140,8 +139,8 @@ def validate_input(value_if_allowed, text):
 
 app = tk.Tk()
 app.title("Pick and Place Robot Controller")
-app.geometry("1280x720")  # Ensure the app has an initial size
-app.update()  # Force the geometry manager to calculate the window size
+app.geometry("1280x720")
+app.update()
 
 # Controls on the left side
 control_frame = tk.Frame(app)
