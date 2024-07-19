@@ -158,18 +158,26 @@ def ClearRobotError(dashboard: DobotApiDashboard):
         globalLockValue.release()
         sleep(5)
 
-def process_image(cap):
+def process_image():
+    # Initialize the webcam
+    cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+
+    # Set desired resolution
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 3840)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 2160)
+
     sleep(1)
     if not cap.isOpened():
         print("Error: Could not open video device.")
         return None
 
+    # Capture a single frame
     ret, frame = cap.read()
+    cap.release()
 
     if not ret:
         print("Error: Could not read frame.")
         return None
-
     detected_points = []
     # Get image dimensions
     height, width, _ = frame.shape
@@ -269,7 +277,7 @@ def process_image(cap):
     print(f"Number of detected points: {len(detected_points)}")
     return detected_points if detected_points else None
 
-# Same as the process_image function but for pink
+#Same as the process_image function but for pink
 def process_pink_color(hsv, cropped_frame):
     # Combine masks for pink
     pink_mask = cv2.inRange(hsv, color_ranges_hsv["pink1"][0], color_ranges_hsv["pink1"][1]) | \
@@ -350,16 +358,11 @@ if __name__ == '__main__':
     intermediate_point[2] = -100
     safe_position = start_point
 
-    x_offset = -0.1
-    y_offset = -0.1
+    x_offset = 0
+    y_offset = 0
 
     pixel_points = []
-
-    # Initialize the webcam once
-    cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 3840)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 2160)
-
+    
     for i, robot_point in enumerate(robot_points):
         if i == 0:
             current_pickup_point = pickup_point.copy()
@@ -368,7 +371,7 @@ if __name__ == '__main__':
             current_pickup_point[1] += y_offset
             # Move to 5mm above the pickup location
             above_pickup_point = current_pickup_point.copy()
-            above_pickup_point[2] += 3
+            above_pickup_point[2] += 5
             RunPoint(move, above_pickup_point)
             WaitArrive(above_pickup_point)
 
@@ -419,16 +422,13 @@ if __name__ == '__main__':
         RunPoint(move, safe_position)
         WaitArrive(safe_position)
 
-        detected_points = process_image(cap)  # Pass the camera object
+        detected_points = process_image()
         if detected_points:
             # Assuming only one point is detected per iteration
             pixel_points.append(detected_points[0])
 
         RunPoint(move, start_point)
         WaitArrive(start_point)
-
-    # Release the camera after processing all images
-    cap.release()
 
     print(f"Number of robot points: {len(robot_points)}")
     print(f"Number of pixel points: {len(pixel_points)}")
