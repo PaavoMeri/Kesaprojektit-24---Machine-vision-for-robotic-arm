@@ -38,9 +38,10 @@ PLACE_LOCATIONS = {
 }
 
 # Define Z coordinates
-Z_ABOVE = -20
-Z_GROUND = -169
-Z_PLACE = 20
+Z_ABOVE = -20 # Intermediate height above the pickup location
+Z_GROUND = -169 # Tile pickup height
+Z_PLACE = 20 # The height where the tile is dropped
+Z_ABOVE_PLACE = 20 # Intermediate place above the location
 
 # Kernel for morphological operations
 kernel = np.ones((3, 3), np.uint8)
@@ -298,8 +299,8 @@ def main(user_inputs):
                 coord = coords[i]
                 above_tile = [coord[0], coord[1], Z_ABOVE, 0]
                 tile = [coord[0], coord[1], Z_GROUND, 0]
-                above_place_location = [PLACE_LOCATIONS[color][0], PLACE_LOCATIONS[color][1], Z_PLACE, 0]
-                place_location = [PLACE_LOCATIONS[color][0], PLACE_LOCATIONS[color][1], Z_ABOVE, 0]
+                above_place_location = [PLACE_LOCATIONS[color][0], PLACE_LOCATIONS[color][1], Z_ABOVE_PLACE, 0]
+                place_location = [PLACE_LOCATIONS[color][0], PLACE_LOCATIONS[color][1], Z_PLACE, 0]
 
                 RunPoint(move, above_tile)
                 WaitArrive(above_tile)
