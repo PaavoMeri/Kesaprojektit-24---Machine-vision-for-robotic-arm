@@ -15,7 +15,7 @@ robotErrorState = False
 globalLockValue = threading.Lock()
 kernel = np.ones((3, 3), np.uint8)
 
-# Predefined points
+# Predefined calibration points
 robot_points = [
     [32.48, -237.79, -169, 0], 
     [111.85, -212.34, -169, 0], 
