@@ -31,7 +31,7 @@ The robot's picking area is the approximately 30-degree area between x=0 and y=-
 
 (Image not to scale)
 
-This is the area where the calibration points are. The robot will not be accurate beyond this area, and calibration is not done below x=0 because of poor lighting that affects image processing.
+This is the area where the calibration points are. The robot will not be accurate outside of this area, and calibration is not done left of x=0 because of poor lighting that affects image processing.
 
     # Predefined calibration points
     robot_points = [
