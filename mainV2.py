@@ -5,6 +5,8 @@ import numpy as np
 import re
 import cv2
 import sys
+import tkinter as tk
+from tkinter import messagebox
 
 current_actual = None
 algorithm_queue = None
@@ -148,6 +150,13 @@ def ClearRobotError(dashboard: DobotApiDashboard):
                 dashboard.Continue()
         globalLockValue.release()
         sleep(5)
+        
+def show_warning(color, requested, available):
+    root = tk.Tk()
+    root.withdraw()  # Hide the root window
+    result = messagebox.askokcancel( f"Not enough {color} tiles detected.\nRequested: {requested}, Available: {available}\nDo you want to continue?")
+    root.destroy()
+    return result
 
 def transform_coordinates(transformation_matrix, pixel_coord):
     pixel_coord = np.append(pixel_coord, 1)  # Add the homogeneous coordinate
@@ -258,7 +267,7 @@ def process_pink_color(hsv, cropped_frame, color_coordinates):
                 center_y = int(rect[0][1])
                 
                 transformed_x, transformed_y = transform_coordinates(transformation_matrix, np.array([center_x, center_y]))
-                
+                  
                 if "pink" not in color_coordinates:
                     color_coordinates["pink"] = []
                 color_coordinates["pink"].append((transformed_x, transformed_y))
@@ -291,6 +300,14 @@ def main(user_inputs):
         print(f"Detected {len(coords)} {color} tiles")
         for coord in coords:
             print(f"{color} tile at {coord}")
+
+    for color, count in user_inputs.items():
+        coords = color_coordinates.get(color, [])
+        if len(coords) < count:
+            continue_execution = show_warning(color, count, len(coords))
+            if not continue_execution:
+                print("Execution stopped by the user.")
+                return    
 
     for color, count in user_inputs.items():
         coords = color_coordinates.get(color, [])
