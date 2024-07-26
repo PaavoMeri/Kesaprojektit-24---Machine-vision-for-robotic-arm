@@ -154,7 +154,10 @@ def ClearRobotError(dashboard: DobotApiDashboard):
 def show_warning(color, requested, available):
     root = tk.Tk()
     root.withdraw()  # Hide the root window
-    result = messagebox.askokcancel( f"Not enough {color} tiles detected.\nRequested: {requested}, Available: {available}\nDo you want to continue?")
+    result = messagebox.askokcancel(
+        "Warning", 
+        f"Not enough {color} tiles detected. \nDo you want to continue?"
+    )
     root.destroy()
     return result
 
@@ -307,7 +310,8 @@ def main(user_inputs):
             continue_execution = show_warning(color, count, len(coords))
             if not continue_execution:
                 print("Execution stopped by the user.")
-                return    
+                return False
+    
 
     for color, count in user_inputs.items():
         coords = color_coordinates.get(color, [])
@@ -342,6 +346,8 @@ def main(user_inputs):
 
             else:
                 break
+            
+    return True
 
 if __name__ == "__main__":
     if len(sys.argv) != 7:

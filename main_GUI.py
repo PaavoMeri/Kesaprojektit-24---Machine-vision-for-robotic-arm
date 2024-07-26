@@ -104,11 +104,13 @@ def run_main_script():
                 "python", MAIN_SCRIPT_PATH, 
                 str(blue_count), str(green_count), str(yellow_count), 
                 str(pink_count), str(orange_count), str(purple_count)
-            ], check=True)
+            ], capture_output=True, text=True)
             if result.returncode == 0:
                 messagebox.showinfo("Success", "Main script executed successfully.")
+            elif result.returncode == 1:
+                messagebox.showwarning("Stopped", "Execution stopped by the user.")
             else:
-                messagebox.showerror("Error", "Main script failed.")
+                messagebox.showerror("Error", f"Main script failed with error code: {result.returncode}\nOutput: {result.stderr}")
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
         finally:
