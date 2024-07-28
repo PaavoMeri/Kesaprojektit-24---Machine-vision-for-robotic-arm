@@ -1,3 +1,5 @@
+<h1>The "GUI-improvements" branch is most up to date, but it has not been tested on campus with the real robot.</h1>
+
 <h2>File paths that need to be changed:</h2>
 
 <h3>mainV2.py</h3>
