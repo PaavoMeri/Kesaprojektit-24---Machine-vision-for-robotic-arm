@@ -1,4 +1,4 @@
-<h1>The "GUI-improvements" branch is most up to date, but it has not been tested on campus with the real robot.</h1>
+<h2>The "GUI-improvements" branch is most up to date, but it has not been tested on campus with the real robot.</h2>
 
 <h2>File paths that need to be changed:</h2>
 
